@@ -6,15 +6,25 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
   // color choices for tile bars
   const BAR_COLORS = ['#D77506', '#10A6EA', '#B91C1C', '#23C560', '#065F46', '#0E7490'];
 
+  // thickness (in px) for the color bars
+  const BAR_THICKNESS = 16;
+
   const pickColor = () => BAR_COLORS[Math.floor(Math.random() * BAR_COLORS.length)];
 
   // helper to make placeholder tiles
-  const makeHorizontalTile = (label, price, key) => {
+  // orientation: 'top' (bar at top edge) or 'bottom' (bar at bottom edge)
+  const makeHorizontalTile = (label, price, key, orientation = 'top') => {
     const c = pickColor();
+    const barStyle = orientation === 'top'
+      ? { position: 'absolute', left: 0, right: 0, top: 0, height: BAR_THICKNESS, background: c }
+      : { position: 'absolute', left: 0, right: 0, bottom: 0, height: BAR_THICKNESS, background: c };
+
+    const contentStyle = orientation === 'top' ? { paddingTop: BAR_THICKNESS + 4 } : { paddingBottom: BAR_THICKNESS + 4 };
+
     return (
-      <div key={key} className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-        <div className="h-6 shadow-inner" style={{ background: c }} />
-        <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
+      <div key={key} className="border border-slate-400 h-[120px] flex flex-col bg-white/90" style={{ position: 'relative' }}>
+        <div style={barStyle} />
+        <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800" style={contentStyle}>
           <div className="font-medium">{label}</div>
           <div className="mt-2 font-semibold text-slate-900">{price}</div>
         </div>
@@ -22,12 +32,20 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
     );
   };
 
-  const makeVerticalTile = (label, price, key) => {
+  // orientation: 'left' (bar on left side of tile) or 'right' (bar on right side of tile)
+  const makeVerticalTile = (label, price, key, orientation = 'right') => {
     const c = pickColor();
+    // place the vertical color bar according to orientation: left -> left edge, right -> right edge
+    const barStyle = orientation === 'left'
+      ? { position: 'absolute', left: 0, top: 0, bottom: 0, width: BAR_THICKNESS, background: c }
+      : { position: 'absolute', right: 0, top: 0, bottom: 0, width: BAR_THICKNESS, background: c };
+
+    const contentStyle = orientation === 'left' ? { paddingLeft: BAR_THICKNESS + 4 } : { paddingRight: BAR_THICKNESS + 4 };
+
     return (
-      <div key={key} className="border border-slate-400 flex flex-col bg-white/90 h-full min-h-0">
-        <div className="h-6 shadow-inner" style={{ background: c }} />
-        <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
+      <div key={key} className="border border-slate-400 flex flex-col bg-white/90 h-full min-h-0" style={{ position: 'relative' }}>
+        <div style={barStyle} />
+        <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800" style={contentStyle}>
           <div className="font-medium">{label}</div>
           <div className="mt-2 font-semibold text-slate-900">{price}</div>
         </div>
@@ -52,10 +70,14 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
   const bottomNames = shuffle(BUILDINGS);
   const leftNames = shuffle(BUILDINGS);
 
-  const topTiles = topCount > 0 ? Array.from({ length: topCount }, (_, i) => makeHorizontalTile(topNames[i % topNames.length], `$${(i + 1) * 10}`, `top-${i}`)) : [];
-  const rightTiles = rightCount > 0 ? Array.from({ length: rightCount }, (_, i) => makeVerticalTile(rightNames[i % rightNames.length], `$${(i + 1) * 10}`, `right-${i}`)) : [];
-  const bottomTiles = bottomCount > 0 ? Array.from({ length: bottomCount }, (_, i) => makeHorizontalTile(bottomNames[i % bottomNames.length], `$${(i + 1) * 10}`, `bottom-${i}`)) : [];
-  const leftTiles = leftCount > 0 ? Array.from({ length: leftCount }, (_, i) => makeVerticalTile(leftNames[i % leftNames.length], `$${(i + 1) * 10}`, `left-${i}`)) : [];
+  // top row: bar should be on the bottom (inner edge)
+  const topTiles = topCount > 0 ? Array.from({ length: topCount }, (_, i) => makeHorizontalTile(topNames[i % topNames.length], `$${(i + 1) * 10}`, `top-${i}`, 'bottom')) : [];
+  // right side tiles should have the color bar on their left (inside)
+  const rightTiles = rightCount > 0 ? Array.from({ length: rightCount }, (_, i) => makeVerticalTile(rightNames[i % rightNames.length], `$${(i + 1) * 10}`, `right-${i}`, 'left')) : [];
+  // bottom row: bar should be on the top (inner edge)
+  const bottomTiles = bottomCount > 0 ? Array.from({ length: bottomCount }, (_, i) => makeHorizontalTile(bottomNames[i % bottomNames.length], `$${(i + 1) * 10}`, `bottom-${i}`, 'top')) : [];
+  // left side tiles should have the color bar on their right (inside)
+  const leftTiles = leftCount > 0 ? Array.from({ length: leftCount }, (_, i) => makeVerticalTile(leftNames[i % leftNames.length], `$${(i + 1) * 10}`, `left-${i}`, 'right')) : [];
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 p-6">
