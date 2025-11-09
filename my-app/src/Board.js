@@ -7,6 +7,33 @@ export default function Board() {
         {/* Soft inner glow */}
         <div className="pointer-events-none absolute inset-0 rounded-[28px] shadow-[inset_0_0_50px_rgba(15,23,42,0.35)]" />
 
+        {/* Four fixed corner tiles */}
+        <div className="absolute top-0 left-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-b from-slate-100 to-slate-50 flex items-center justify-center text-center px-2">
+          <div className="text-[11px] leading-tight text-slate-800">
+            <div className="font-black text-lg mb-1 tracking-tight">AI<br />VIOLATION</div>
+            <div className="text-[10px] text-slate-600">(Go to "Crime<br />Committed")</div>
+          </div>
+        </div>
+
+        <div className="absolute top-0 right-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-b from-slate-100 to-slate-50 flex items-center justify-center text-center px-2">
+          <div className="text-[11px] leading-tight text-slate-800">
+            <div className="font-black text-lg mb-1 tracking-tight">HEALTH<br />ISSUE</div>
+            <div className="text-[10px] text-slate-600">(Free<br />Parking)</div>
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-t from-slate-100 to-slate-50 flex items-center justify-center text-center">
+          <div className="font-bold text-base leading-tight tracking-tight text-slate-800">
+            (Just<br />Visiting)
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 right-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 flex flex-col items-center justify-center text-center text-white shadow-inner">
+          <div className="font-semibold text-[11px] tracking-[0.18em] uppercase">Collect<br />Stipend</div>
+          <div className="mt-1 text-3xl font-black tracking-wide">START</div>
+          <div className="mt-1 text-2xl animate-pulse">➜</div>
+        </div>
+
         {/* Center */}
         <div className="absolute inset-28 bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 flex items-center justify-center rounded-[32px] shadow-inner border border-slate-200/70">
           <div className="-rotate-12 text-center drop-shadow-sm">
@@ -15,15 +42,8 @@ export default function Board() {
           </div>
         </div>
 
-        {/* Bottom row */}
-        <div className="absolute bottom-0 left-0 right-0 flex">
-          {/* Just Visiting */}
-          <div className="w-[120px] h-[120px] border border-slate-400 bg-gradient-to-t from-slate-100 to-slate-50 flex items-center justify-center text-center">
-            <div className="font-bold text-base leading-tight tracking-tight text-slate-800">
-              (Just<br />Visiting)
-            </div>
-          </div>
-
+        {/* Bottom row (middle tiles) */}
+        <div className="absolute bottom-0 left-[120px] right-[120px] flex">
           {/* Middle tiles */}
           <div className="flex-1 grid grid-cols-9">
             {/* Ellicott */}
@@ -92,25 +112,10 @@ export default function Board() {
               </div>
             </div>
           </div>
-
-          {/* Start */}
-          <div className="w-[120px] h-[120px] border border-slate-400 bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 flex flex-col items-center justify-center text-center text-white shadow-inner">
-            <div className="font-semibold text-[11px] tracking-[0.18em] uppercase">Collect<br />Stipend</div>
-            <div className="mt-1 text-3xl font-black tracking-wide">START</div>
-            <div className="mt-1 text-2xl animate-pulse">➜</div>
-          </div>
         </div>
 
-        {/* Top row */}
-        <div className="absolute top-0 left-0 right-0 flex">
-          {/* AI Violation */}
-          <div className="w-[120px] h-[120px] border border-slate-400 bg-gradient-to-b from-slate-100 to-slate-50 flex items-center justify-center text-center px-2">
-            <div className="text-[11px] leading-tight text-slate-800">
-              <div className="font-black text-lg mb-1 tracking-tight">AI<br />VIOLATION</div>
-              <div className="text-[10px] text-slate-600">(Go to "Crime<br />Committed")</div>
-            </div>
-          </div>
-
+        {/* Top row (middle tiles) */}
+        <div className="absolute top-0 left-[120px] right-[120px] flex">
           {/* Middle tiles */}
           <div className="flex-1 grid grid-cols-9">
             {/* Capen */}
