@@ -11,10 +11,18 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
 
   const pickColor = () => BAR_COLORS[Math.floor(Math.random() * BAR_COLORS.length)];
 
+  // pick a random color, optionally excluding the previous color to avoid repeats in a line
+  const pickColorExcluding = (exclude) => {
+    if (!exclude) return pickColor();
+    const choices = BAR_COLORS.filter(c => c !== exclude);
+    if (choices.length === 0) return exclude; // fallback
+    return choices[Math.floor(Math.random() * choices.length)];
+  };
+
   // helper to make placeholder tiles
   // orientation: 'top' (bar at top edge) or 'bottom' (bar at bottom edge)
-  const makeHorizontalTile = (label, price, key, orientation = 'top') => {
-    const c = pickColor();
+  const makeHorizontalTile = (label, price, key, orientation = 'top', color) => {
+    const c = color || pickColor();
     const barStyle = orientation === 'top'
       ? { position: 'absolute', left: 0, right: 0, top: 0, height: BAR_THICKNESS, background: c }
       : { position: 'absolute', left: 0, right: 0, bottom: 0, height: BAR_THICKNESS, background: c };
@@ -33,8 +41,8 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
   };
 
   // orientation: 'left' (bar on left side of tile) or 'right' (bar on right side of tile)
-  const makeVerticalTile = (label, price, key, orientation = 'right') => {
-    const c = pickColor();
+  const makeVerticalTile = (label, price, key, orientation = 'right', color) => {
+    const c = color || pickColor();
     // place the vertical color bar according to orientation: left -> left edge, right -> right edge
     const barStyle = orientation === 'left'
       ? { position: 'absolute', left: 0, top: 0, bottom: 0, width: BAR_THICKNESS, background: c }
@@ -70,14 +78,48 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
   const bottomNames = shuffle(BUILDINGS);
   const leftNames = shuffle(BUILDINGS);
 
-  // top row: bar should be on the bottom (inner edge)
-  const topTiles = topCount > 0 ? Array.from({ length: topCount }, (_, i) => makeHorizontalTile(topNames[i % topNames.length], `$${(i + 1) * 10}`, `top-${i}`, 'bottom')) : [];
-  // right side tiles should have the color bar on their left (inside)
-  const rightTiles = rightCount > 0 ? Array.from({ length: rightCount }, (_, i) => makeVerticalTile(rightNames[i % rightNames.length], `$${(i + 1) * 10}`, `right-${i}`, 'left')) : [];
-  // bottom row: bar should be on the top (inner edge)
-  const bottomTiles = bottomCount > 0 ? Array.from({ length: bottomCount }, (_, i) => makeHorizontalTile(bottomNames[i % bottomNames.length], `$${(i + 1) * 10}`, `bottom-${i}`, 'top')) : [];
-  // left side tiles should have the color bar on their right (inside)
-  const leftTiles = leftCount > 0 ? Array.from({ length: leftCount }, (_, i) => makeVerticalTile(leftNames[i % leftNames.length], `$${(i + 1) * 10}`, `left-${i}`, 'right')) : [];
+  // generate tiles while avoiding the same color in adjacent positions on the same side
+  const topTiles = [];
+  if (topCount > 0) {
+    let prevColor = null;
+    for (let i = 0; i < topCount; i++) {
+      const color = pickColorExcluding(prevColor);
+      topTiles.push(makeHorizontalTile(topNames[i % topNames.length], `$${(i + 1) * 10}`, `top-${i}`, 'bottom', color));
+      prevColor = color;
+    }
+  }
+
+  const rightTiles = [];
+  if (rightCount > 0) {
+    let prevColor = null;
+    for (let i = 0; i < rightCount; i++) {
+      const color = pickColorExcluding(prevColor);
+      // right side tiles should have the color bar on their left (inside)
+      rightTiles.push(makeVerticalTile(rightNames[i % rightNames.length], `$${(i + 1) * 10}`, `right-${i}`, 'left', color));
+      prevColor = color;
+    }
+  }
+
+  const bottomTiles = [];
+  if (bottomCount > 0) {
+    let prevColor = null;
+    for (let i = 0; i < bottomCount; i++) {
+      const color = pickColorExcluding(prevColor);
+      bottomTiles.push(makeHorizontalTile(bottomNames[i % bottomNames.length], `$${(i + 1) * 10}`, `bottom-${i}`, 'top', color));
+      prevColor = color;
+    }
+  }
+
+  const leftTiles = [];
+  if (leftCount > 0) {
+    let prevColor = null;
+    for (let i = 0; i < leftCount; i++) {
+      const color = pickColorExcluding(prevColor);
+      // left side tiles should have the color bar on their right (inside)
+      leftTiles.push(makeVerticalTile(leftNames[i % leftNames.length], `$${(i + 1) * 10}`, `left-${i}`, 'right', color));
+      prevColor = color;
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 p-6">
@@ -109,7 +151,7 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
   <div className="absolute bottom-0 right-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 flex flex-col items-center justify-center text-center text-white shadow-inner z-20">
           <div className="font-semibold text-[11px] tracking-[0.18em] uppercase">Collect<br />Stipend</div>
           <div className="mt-1 text-3xl font-black tracking-wide">START</div>
-          <div className="mt-1 text-2xl animate-pulse">➜</div>
+          <div className="mt-1 text-2xl animate-pulse">⬅</div>
         </div>
 
         {/* Center */}
