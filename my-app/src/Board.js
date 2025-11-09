@@ -1,4 +1,5 @@
 import React from 'react';
+import victorModel from './victor.glb';
 
 export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
   // tilesBySide: [top, right, bottom, left] counts excluding corners
@@ -123,7 +124,7 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 p-6">
-      <div className="relative bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 w-[900px] h-[900px] border-[12px] border-slate-700 rounded-[36px] shadow-[0_28px_80px_rgba(15,23,42,0.9)] overflow-hidden">
+  <div className="relative bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 w-[900px] h-[900px] border-[12px] border-slate-700 rounded-[36px] shadow-[0_28px_80px_rgba(15,23,42,0.9)] overflow-hidden">
         {/* Soft inner glow */}
         <div className="pointer-events-none absolute inset-0 rounded-[28px] shadow-[inset_0_0_50px_rgba(15,23,42,0.35)]" />
 
@@ -188,6 +189,17 @@ export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
             {rightTiles}
           </div>
         </div>
+      </div>
+      {/* 3D model viewer on the right */}
+      <div className="ml-6 flex items-center">
+        <model-viewer
+          src={victorModel}
+          alt="3D model"
+          ar
+          camera-controls
+          auto-rotate
+          style={{ width: 360, height: 360, background: 'transparent', borderRadius: 0, boxShadow: 'none', border: 'none' }}
+        ></model-viewer>
       </div>
     </div>
   );
