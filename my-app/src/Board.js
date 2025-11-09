@@ -1,6 +1,62 @@
 import React from 'react';
 
-export default function Board() {
+export default function Board({ tilesBySide = [9, 9, 9, 9] }) {
+  // tilesBySide: [top, right, bottom, left] counts excluding corners
+
+  // color choices for tile bars
+  const BAR_COLORS = ['#D77506', '#10A6EA', '#B91C1C', '#23C560', '#065F46', '#0E7490'];
+
+  const pickColor = () => BAR_COLORS[Math.floor(Math.random() * BAR_COLORS.length)];
+
+  // helper to make placeholder tiles
+  const makeHorizontalTile = (label, price, key) => {
+    const c = pickColor();
+    return (
+      <div key={key} className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
+        <div className="h-6 shadow-inner" style={{ background: c }} />
+        <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
+          <div className="font-medium">{label}</div>
+          <div className="mt-2 font-semibold text-slate-900">{price}</div>
+        </div>
+      </div>
+    );
+  };
+
+  const makeVerticalTile = (label, price, key) => {
+    const c = pickColor();
+    return (
+      <div key={key} className="border border-slate-400 flex flex-col bg-white/90 h-full min-h-0">
+        <div className="h-6 shadow-inner" style={{ background: c }} />
+        <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
+          <div className="font-medium">{label}</div>
+          <div className="mt-2 font-semibold text-slate-900">{price}</div>
+        </div>
+      </div>
+    );
+  };
+
+  // University at Buffalo building names (sample, taken from the board design)
+  const BUILDINGS = [
+    'Ellicott Complex', 'Greiner Hall', 'Furnas Hall', 'Ketter Hall', 'Bonner Hall', 'Cooke Hall', 'Park Hall',
+    'Capen Hall', 'Norton Hall', "O'Brian Hall", 'Baird Hall', 'Lockwood Library', 'Slee Hall', 'Alumni Arena',
+    'Baldy Hall', 'Center for the Arts', 'One World Café', 'Silverman Library', 'Founders Plaza', 'Clements Hall',
+    'Talbert Hall', 'The Commons', 'Student Union', 'Natural Sciences', 'Knox Hall', 'Davis Hall', 'Bell Hall',
+    'Jacobs Hall', 'Hochstetter Hall'
+  ];
+
+  const shuffle = (arr) => arr.slice().sort(() => Math.random() - 0.5);
+
+  const [topCount, rightCount, bottomCount, leftCount] = tilesBySide;
+  const topNames = shuffle(BUILDINGS);
+  const rightNames = shuffle(BUILDINGS);
+  const bottomNames = shuffle(BUILDINGS);
+  const leftNames = shuffle(BUILDINGS);
+
+  const topTiles = topCount > 0 ? Array.from({ length: topCount }, (_, i) => makeHorizontalTile(topNames[i % topNames.length], `$${(i + 1) * 10}`, `top-${i}`)) : [];
+  const rightTiles = rightCount > 0 ? Array.from({ length: rightCount }, (_, i) => makeVerticalTile(rightNames[i % rightNames.length], `$${(i + 1) * 10}`, `right-${i}`)) : [];
+  const bottomTiles = bottomCount > 0 ? Array.from({ length: bottomCount }, (_, i) => makeHorizontalTile(bottomNames[i % bottomNames.length], `$${(i + 1) * 10}`, `bottom-${i}`)) : [];
+  const leftTiles = leftCount > 0 ? Array.from({ length: leftCount }, (_, i) => makeVerticalTile(leftNames[i % leftNames.length], `$${(i + 1) * 10}`, `left-${i}`)) : [];
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 p-6">
       <div className="relative bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 w-[900px] h-[900px] border-[12px] border-slate-700 rounded-[36px] shadow-[0_28px_80px_rgba(15,23,42,0.9)] overflow-hidden">
@@ -8,27 +64,27 @@ export default function Board() {
         <div className="pointer-events-none absolute inset-0 rounded-[28px] shadow-[inset_0_0_50px_rgba(15,23,42,0.35)]" />
 
         {/* Four fixed corner tiles */}
-        <div className="absolute top-0 left-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-b from-slate-100 to-slate-50 flex items-center justify-center text-center px-2">
+  <div className="absolute top-0 left-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-b from-slate-100 to-slate-50 flex items-center justify-center text-center px-2 z-20">
           <div className="text-[11px] leading-tight text-slate-800">
             <div className="font-black text-lg mb-1 tracking-tight">AI<br />VIOLATION</div>
             <div className="text-[10px] text-slate-600">(Go to "Crime<br />Committed")</div>
           </div>
         </div>
 
-        <div className="absolute top-0 right-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-b from-slate-100 to-slate-50 flex items-center justify-center text-center px-2">
+  <div className="absolute top-0 right-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-b from-slate-100 to-slate-50 flex items-center justify-center text-center px-2 z-20">
           <div className="text-[11px] leading-tight text-slate-800">
             <div className="font-black text-lg mb-1 tracking-tight">HEALTH<br />ISSUE</div>
             <div className="text-[10px] text-slate-600">(Free<br />Parking)</div>
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-t from-slate-100 to-slate-50 flex items-center justify-center text-center">
+  <div className="absolute bottom-0 left-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-t from-slate-100 to-slate-50 flex items-center justify-center text-center z-20">
           <div className="font-bold text-base leading-tight tracking-tight text-slate-800">
             (Just<br />Visiting)
           </div>
         </div>
 
-        <div className="absolute bottom-0 right-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 flex flex-col items-center justify-center text-center text-white shadow-inner">
+  <div className="absolute bottom-0 right-0 w-[120px] h-[120px] border border-slate-400 bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 flex flex-col items-center justify-center text-center text-white shadow-inner z-20">
           <div className="font-semibold text-[11px] tracking-[0.18em] uppercase">Collect<br />Stipend</div>
           <div className="mt-1 text-3xl font-black tracking-wide">START</div>
           <div className="mt-1 text-2xl animate-pulse">➜</div>
@@ -42,301 +98,30 @@ export default function Board() {
           </div>
         </div>
 
-        {/* Bottom row (middle tiles) */}
-        <div className="absolute bottom-0 left-[120px] right-[120px] flex">
-          {/* Middle tiles */}
-          <div className="flex-1 grid grid-cols-9">
-            {/* Ellicott */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-red-900 via-red-700 to-red-900 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Ellicott<br />Complex</div>
-                <div className="mt-2 font-semibold text-slate-900">$220</div>
-              </div>
-            </div>
-            {/* Greiner */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-red-900 via-red-700 to-red-900 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Greiner<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$240</div>
-              </div>
-            </div>
-            {/* Dean's List */}
-            <div className="border border-slate-400 h-[120px] flex flex-col items-center justify-center text-[11px] text-center bg-slate-50">
-              <div className="font-semibold mb-2 tracking-tight text-slate-800">Dean's<br />List</div>
-              <div className="text-3xl drop-shadow-sm">⭐</div>
-            </div>
-            {/* Furnas */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-yellow-300 via-amber-300 to-yellow-300 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Furnas<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$260</div>
-              </div>
-            </div>
-            {/* Ketter Hall */}
-            <div className="border border-slate-400 h-[120px] flex flex-col items-center justify-between py-2 text-[11px] text-center bg-slate-50">
-              <div className="font-semibold tracking-tight text-slate-800">Ketter Hall</div>
-              <div className="text-3xl">🚗</div>
-              <div className="font-semibold text-slate-900">$200</div>
-            </div>
-            {/* Tuition Fee */}
-            <div className="border border-slate-400 h-[120px] flex flex-col items-center justify-between py-2 text-[11px] text-center bg-slate-50">
-              <div className="font-semibold tracking-tight text-slate-800">Tuition<br />Fee</div>
-              <div className="text-3xl">💵</div>
-              <div className="text-slate-800">Pay <span className="font-semibold text-slate-900">$200</span></div>
-            </div>
-            {/* Bonner */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-yellow-300 via-amber-300 to-yellow-300 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Bonner<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$260</div>
-              </div>
-            </div>
-            {/* Cooke */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-yellow-300 via-amber-300 to-yellow-300 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Cooke<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$280</div>
-              </div>
-            </div>
-            {/* Park */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-400 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Park Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$300</div>
-              </div>
-            </div>
+        <div className="absolute bottom-0 left-[120px] right-[120px] flex z-10" style={{ height: '120px' }}>
+          <div className="flex-1 grid" style={{ gridTemplateColumns: `repeat(${bottomCount || 1}, 1fr)`, gap: 0 }}>
+            {bottomTiles}
           </div>
         </div>
 
         {/* Top row (middle tiles) */}
-        <div className="absolute top-0 left-[120px] right-[120px] flex">
-          {/* Middle tiles */}
-          <div className="flex-1 grid grid-cols-9">
-            {/* Capen */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Capen<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$60</div>
-              </div>
-            </div>
-            {/* Norton */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Norton<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$60</div>
-              </div>
-            </div>
-            {/* Pop Quiz */}
-            <div className="border border-slate-400 h-[120px] flex flex-col items-center justify-center text-[11px] text-center bg-slate-50">
-              <div className="font-semibold mb-2 tracking-tight text-slate-800">Pop Quiz</div>
-              <div className="text-3xl text-slate-800">?</div>
-            </div>
-            {/* O'Brian */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">O'Brian<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$100</div>
-              </div>
-            </div>
-            {/* Baird */}
-            <div className="border border-slate-400 h-[120px] flex flex-col items-center justify-between py-2 text-[11px] text-center bg-slate-50">
-              <div className="font-semibold tracking-tight text-slate-800">Baird Hall</div>
-              <div className="text-3xl">🚌</div>
-              <div className="font-semibold text-slate-900">$200</div>
-            </div>
-            {/* Lockwood */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Lockwood<br />Library</div>
-                <div className="mt-2 font-semibold text-slate-900">$100</div>
-              </div>
-            </div>
-            {/* Dean's List */}
-            <div className="border border-slate-400 h-[120px] flex flex-col items-center justify-center text-[11px] text-center bg-slate-50">
-              <div className="font-semibold mb-2 tracking-tight text-slate-800">Dean's<br />List</div>
-              <div className="text-3xl drop-shadow-sm">⭐</div>
-            </div>
-            {/* Slee */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Slee Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$120</div>
-              </div>
-            </div>
-            {/* Alumni */}
-            <div className="border border-slate-400 h-[120px] flex flex-col bg-white/90">
-              <div className="h-6 bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800">
-                <div className="font-medium">Alumni<br />Arena</div>
-                <div className="mt-2 font-semibold text-slate-900">$140</div>
-              </div>
-            </div>
+        <div className="absolute top-0 left-[120px] right-[120px] flex z-10" style={{ height: '120px' }}>
+          <div className="flex-1 grid" style={{ gridTemplateColumns: `repeat(${topCount || 1}, 1fr)`, gap: 0 }}>
+            {topTiles}
           </div>
         </div>
 
         {/* Left side */}
-        <div className="absolute left-0 top-[120px] bottom-[120px] flex">
-          <div className="w-[120px] h-full grid grid-rows-9">
-            {/* Baldy */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="w-6 bg-gradient-to-b from-emerald-400 via-green-500 to-emerald-400 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800 rotate-180 [writing-mode:vertical-rl]">
-                <div className="font-medium">Baldy Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$300</div>
-              </div>
-            </div>
-            {/* Center for the Arts */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="w-6 bg-gradient-to-b from-emerald-400 via-green-500 to-emerald-400 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800 px-1 rotate-180 [writing-mode:vertical-rl]">
-                <div className="font-medium">Center for<br />the Arts</div>
-                <div className="mt-2 font-semibold text-slate-900">$320</div>
-              </div>
-            </div>
-            {/* Bookstore Fee */}
-            <div className="border border-slate-400 flex flex-col items-center justify-between py-2 text-[11px] text-center bg-slate-50 rotate-180 [writing-mode:vertical-rl]">
-              <div className="font-semibold tracking-tight text-slate-800">Bookstore<br />Fee</div>
-              <div className="text-3xl">💵</div>
-              <div className="text-slate-800">Pay <span className="font-semibold text-slate-900">$50</span></div>
-            </div>
-            {/* One World Café */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="w-6 bg-gradient-to-b from-teal-700 via-cyan-700 to-teal-700 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800 px-1 rotate-180 [writing-mode:vertical-rl]">
-                <div className="font-medium">One World<br />Café</div>
-                <div className="mt-2 font-semibold text-slate-900">$350</div>
-              </div>
-            </div>
-            {/* Silverman Library */}
-            <div className="border border-slate-400 flex flex-col items-center justify-between py-2 text-[11px] text-center bg-slate-50 rotate-180 [writing-mode:vertical-rl]">
-              <div className="font-semibold tracking-tight text-slate-800">Silverman<br />Library</div>
-              <div className="text-3xl">📚</div>
-              <div className="font-semibold text-slate-900">$200</div>
-            </div>
-            {/* Pop Quiz */}
-            <div className="border border-slate-400 flex flex-col items-center justify-center text-[11px] text-center bg-slate-50 rotate-180 [writing-mode:vertical-rl]">
-              <div className="font-semibold mb-2 tracking-tight text-slate-800">Pop Quiz</div>
-              <div className="text-3xl text-slate-800">?</div>
-            </div>
-            {/* Founders Plaza */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="w-6 bg-gradient-to-b from-emerald-900 via-emerald-800 to-emerald-900 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800 px-1 rotate-180 [writing-mode:vertical-rl]">
-                <div className="font-medium">Founders<br />Plaza</div>
-                <div className="mt-2 font-semibold text-slate-900">$400</div>
-              </div>
-            </div>
-            {/* Clements Hall */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="w-6 bg-gradient-to-b from-orange-400 via-amber-400 to-orange-500 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800 rotate-180 [writing-mode:vertical-rl]">
-                <div className="font-medium">Clements<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$150</div>
-              </div>
-            </div>
-            {/* Talbert Hall */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="w-6 bg-gradient-to-b from-orange-400 via-amber-400 to-orange-500 shadow-inner" />
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800 rotate-180 [writing-mode:vertical-rl]">
-                <div className="font-medium">Talbert<br />Hall</div>
-                <div className="mt-2 font-semibold text-slate-900">$140</div>
-              </div>
-            </div>
+        <div className="absolute left-0 top-[120px] bottom-[120px] flex z-10">
+          <div className="w-[120px] h-full grid" style={{ gridTemplateRows: `repeat(${leftCount || 1}, 1fr)`, gap: 0 }}>
+            {leftTiles}
           </div>
         </div>
 
         {/* Right side */}
-        <div className="absolute right-0 top-[120px] bottom-[120px] flex">
-          <div className="w-[120px] h-full grid grid-rows-9">
-            {/* The Commons */}
-            <div className="border border-slate-400 flex flex-col bg-white/90">
-              <div className="flex flex-row h-full">
-                <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center leading-tight text-slate-800 rotate-180 [writing-mode:vertical-rl]">
-                  <span className="font-medium">The Commons</span>
-                  <span className="mt-2 font-semibold text-slate-900">$220</span>
-                </div>
-                <div className="w-6 bg-gradient-to-b from-red-900 via-red-700 to-red-900 shadow-inner" />
-              </div>
-            </div>
-            {/* Pop Quiz */}
-            <div className="border border-slate-400 flex items-center justify-center bg-slate-50">
-              <div className="flex flex-col items-center justify-center text-[11px] text-center text-slate-800 rotate-180 [writing-mode:vertical-rl]">
-                <span className="font-semibold mb-2 tracking-tight">Pop Quiz</span>
-                <span className="text-3xl">?</span>
-              </div>
-            </div>
-            {/* Student Union */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center text-slate-800 rotate-180 [writing-mode:vertical-rl] leading-tight">
-                <span className="font-medium">Student<br />Union</span>
-                <span className="mt-2 font-semibold text-slate-900">$200</span>
-              </div>
-              <div className="w-6 bg-gradient-to-b from-yellow-300 via-amber-300 to-yellow-300 shadow-inner" />
-            </div>
-            {/* Natural Sciences */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center text-slate-800 rotate-180 [writing-mode:vertical-rl] leading-tight">
-                <span className="font-medium">Natural<br />Sciences</span>
-                <span className="mt-2 font-semibold text-slate-900">$180</span>
-              </div>
-              <div className="w-6 bg-gradient-to-b from-yellow-300 via-amber-300 to-yellow-300 shadow-inner" />
-            </div>
-            {/* Knox Hall */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center text-slate-800 rotate-180 [writing-mode:vertical-rl] leading-tight">
-                <span className="font-medium">Knox Hall</span>
-                <span className="mt-2 font-semibold text-slate-900">$200</span>
-              </div>
-              <div className="w-6 flex flex-col shadow-inner">
-                <div className="flex-1 bg-sky-500" />
-                <div className="flex-1 bg-rose-500" />
-                <div className="flex-1 bg-amber-300" />
-                <div className="flex-1 bg-emerald-500" />
-              </div>
-            </div>
-            {/* Davis Hall */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center text-slate-800 rotate-180 [writing-mode:vertical-rl] leading-tight">
-                <span className="font-medium">Davis Hall</span>
-                <span className="mt-2 font-semibold text-slate-900">$180</span>
-              </div>
-              <div className="w-6 bg-gradient-to-b from-yellow-300 via-amber-300 to-yellow-300 shadow-inner" />
-            </div>
-            {/* Bell Hall */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center text-slate-800 rotate-180 [writing-mode:vertical-rl] leading-tight">
-                <span className="font-medium">Bell Hall</span>
-                <span className="mt-2 font-semibold text-slate-900">$150</span>
-              </div>
-              <div className="w-6 bg-gradient-to-b from-orange-400 via-amber-400 to-orange-500 shadow-inner" />
-            </div>
-            {/* Jacobs Hall */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center text-slate-800 rotate-180 [writing-mode:vertical-rl] leading-tight">
-                <span className="font-medium">Jacobs<br />Hall</span>
-                <span className="mt-2 font-semibold text-slate-900">$140</span>
-              </div>
-              <div className="w-6 bg-gradient-to-b from-orange-400 via-amber-400 to-orange-500 shadow-inner" />
-            </div>
-            {/* Hochstetter Hall */}
-            <div className="border border-slate-400 flex flex-row bg-white/90">
-              <div className="flex-1 flex flex-col items-center justify-center text-[11px] text-center text-slate-800 rotate-180 [writing-mode:vertical-rl] leading-tight">
-                <span className="font-medium">Hochstetter<br />Hall</span>
-                <span className="mt-2 font-semibold text-slate-900">$160</span>
-              </div>
-              <div className="w-6 bg-gradient-to-b from-orange-400 via-amber-400 to-orange-500 shadow-inner" />
-            </div>
+        <div className="absolute right-0 top-[120px] bottom-[120px] flex z-10">
+          <div className="w-[120px] h-full grid" style={{ gridTemplateRows: `repeat(${rightCount || 1}, 1fr)`, gap: 0 }}>
+            {rightTiles}
           </div>
         </div>
       </div>
